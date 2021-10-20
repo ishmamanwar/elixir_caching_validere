@@ -29,6 +29,10 @@ defmodule ElixirCachingValidere do
     %ElixirCachingValidere{ttl_table: ttl_table, table: name, size: size, evict_fn: evict_fn}
   end
 
+  def init({name, size, opts}) do
+    init(name, size, opts)
+  end
+
   def put(name, key, value),
     do: Agent.get(name, __MODULE__, :handle_put, [key, value])
 
