@@ -2,7 +2,7 @@ defmodule ElixirCachingValidereTest do
   use ExUnit.Case
   # doctest ElixirCachingValidere
 
-  test "GET PUT works" do
+  test "general functions work" do
     assert {:ok, _} = ElixirCachingValidere.start_link(:test1, 2)
     assert :ok = ElixirCachingValidere.put(:test1, 1, "value")
     assert "value" = ElixirCachingValidere.get(:test1, 1)
