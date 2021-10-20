@@ -4,6 +4,20 @@ defmodule ElixirCachingValidere do
 
   defstruct table: nil, time_table: nil, size: 0, evict_fn: nil
 
+
+  def test do
+    ElixirCachingValidere.start_link(:test1, 2) # new cache process with 2 items max limit
+    ElixirCachingValidere.put(:test1, :a, 1) # put a->1 { a: 1 }
+    ElixirCachingValidere.put(:test1, :b, 2) # put b->2 { a: 1, b: 2 }
+    ElixirCachingValidere.put(:test1, :c, 3) # can't put c, deleting a, and putting c { b: 2, c: 3}
+    ElixirCachingValidere.put(:test1, :d, 4) # can't put d, deleting b, and putting d { c: 3, d: 4}
+    ElixirCachingValidere.put(:test1, :d, 5) # updating d { c: 3, d: 5}
+
+    IO.inspect(ElixirCachingValidere.get(:test1, :c))
+    IO.inspect(ElixirCachingValidere.get(:test1, :d))
+
+  end
+
   def start_link(name, size, opts \\ []) do
     Agent.start_link(__MODULE__, :init, [name, size, opts], name: name)
   end
@@ -85,7 +99,4 @@ defmodule ElixirCachingValidere do
     :ok
   end
 
-  def hello do
-    :world
-  end
 end
