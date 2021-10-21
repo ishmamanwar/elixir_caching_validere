@@ -1,12 +1,15 @@
 defmodule ElixirCachingValidere.Router do
+
+  alias ElixirCachingValidere.LruCache
+
   use Plug.Router
 
   plug(Plug.Logger)
   plug(:match)
   plug(:dispatch)
 
-  get "/hello" do
-    send_resp(conn, 200, "world")
+  get "/api/get-all" do
+    send_resp(conn, 200, to_string(LruCache.get_all()))
   end
 
   match _ do
