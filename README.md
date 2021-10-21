@@ -1,6 +1,6 @@
 # ElixirCachingValidere
 
-**REST Endpoints**
+## REST Endpoints
 1. localhost:4001/api/get/:key [GET]
 2. localhost:4001/api/value [POST]
 3. localhost:4001/api/post [POST]
