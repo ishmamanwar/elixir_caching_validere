@@ -4,16 +4,16 @@ defmodule ElixirCachingValidere.LruCache do
 
   defstruct table: nil, time_table: nil, size: 0, evict_fn: nil
 
-  def get_all() do
-    ElixirCachingValidere.LruCache.start_link(:test1, 2) # new cache process with 2 items max limit
-    ElixirCachingValidere.LruCache.put(:test1, :a, 1) # put a->1 { a: 1 }
-    ElixirCachingValidere.LruCache.put(:test1, :b, 2) # put b->2 { a: 1, b: 2 }
-    ElixirCachingValidere.LruCache.put(:test1, :c, 3) # can't put c, deleting a, and putting c { b: 2, c: 3}
-    ElixirCachingValidere.LruCache.put(:test1, :d, 4) # can't put d, deleting b, and putting d { c: 3, d: 4}
-    ElixirCachingValidere.LruCache.put(:test1, :d, 5) # updating d { c: 3, d: 5}
+  def get_all(key) do
+    ElixirCachingValidere.LruCache.start_link(:cache, 2) # new cache process with 2 items max limit
+    ElixirCachingValidere.LruCache.put(:cache, "a", 1) # put a->1 { a: 1 }
+    ElixirCachingValidere.LruCache.put(:cache, "b", 2) # put b->2 { a: 1, b: 2 }
+    ElixirCachingValidere.LruCache.put(:cache, "c", 3) # can't put c, deleting a, and putting c { b: 2, c: 3}
+    ElixirCachingValidere.LruCache.put(:cache, "d", 4) # can't put d, deleting b, and putting d { c: 3, d: 4}
+    ElixirCachingValidere.LruCache.put(:cache, "d", 5) # updating d { c: 3, d: 5}
 
     #IO.inspect(ElixirCachingValidere.LruCache.get(:test1, :c))
-    ElixirCachingValidere.LruCache.get(:test1, :c)
+    ElixirCachingValidere.LruCache.get_value(key)
 
   end
 
@@ -105,5 +105,9 @@ defmodule ElixirCachingValidere.LruCache do
     delete_timetable(state, key)
     :ets.delete(table, key)
     :ok
+  end
+
+  def get_value(key) do
+    ElixirCachingValidere.LruCache.get(:cache, key)
   end
 end

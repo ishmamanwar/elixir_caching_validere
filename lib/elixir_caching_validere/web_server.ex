@@ -10,7 +10,7 @@ defmodule ElixirCachingValidere.WebServer do
     IO.inspect(conn)
 
     conn
-    |> put_resp_content_type("text/plain")
+    |> put_resp_content_type("application/json")
     |> send_resp(200, "Hello World")
   end
 end

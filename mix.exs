@@ -22,7 +22,13 @@ defmodule ElixirCachingValidere.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:plug_cowboy, "~> 2.2"}
+      {:plug_cowboy, "~> 2.2"},
+      {:poison, "~> 4.0.1"},
+      {:poolboy, "~> 1.5"},
+      {:credo, "~> 1.3", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.21.3", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.12.3", only: :test}
     ]
   end
 end
