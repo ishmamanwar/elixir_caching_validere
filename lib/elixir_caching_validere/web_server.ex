@@ -1,4 +1,11 @@
 defmodule ElixirCachingValidere.WebServer do
+  @moduledoc ~S"""
+  Test WebServer
+
+
+  ## Design
+  Console logs "Plug init..." when webserver established under supervision tree and a basic call that returns "Hello World"
+  """
   import Plug.Conn
 
   def init(options) do
