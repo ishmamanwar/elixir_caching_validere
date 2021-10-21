@@ -4,24 +4,21 @@ defmodule ElixirCachingValidere.LruCache do
 
   defstruct table: nil, time_table: nil, size: 0, evict_fn: nil
 
-  def start_link(name, size, opts \\ []) do
-    Agent.start_link(__MODULE__, :init, [name, size, opts], name: name)
+  def start_link(size) do
+    Agent.start_link(__MODULE__, :init, [size], name: :cache)
   end
 
-  def init(name, size, opts \\ []) do
-    time_table = :"#{name}_timetable"
+  def init(size) do
+    time_table = :cache_timetable
     :ets.new(time_table, [:named_table, :ordered_set])
-    :ets.new(name, [:named_table, :public, {:read_concurrency, true}])
-    evict_fn = Keyword.get(opts, :evict_fn)
-    %ElixirCachingValidere.LruCache{time_table: time_table, table: name, size: size, evict_fn: evict_fn}
+    :ets.new(:cache, [:named_table, :public, {:read_concurrency, true}])
+    evict_fn = Keyword.get([], :evict_fn)
+    %ElixirCachingValidere.LruCache{time_table: time_table, table: :cache, size: size, evict_fn: evict_fn}
   end
 
-  def init({name, size, opts}) do
-    init(name, size, opts)
-  end
 
-  def put(name, key, value),
-    do: Agent.get(name, __MODULE__, :handle_put, [key, value])
+  def put(key, value),
+    do: Agent.get(:cache, __MODULE__, :handle_put, [key, value])
 
   def handle_put(state = %{table: table}, key, value) do
     delete_timetable(state, key)
@@ -67,10 +64,10 @@ defmodule ElixirCachingValidere.LruCache do
     evict_fn.(key, value)
   end
 
-  def get(name, key, touch \\ true) do
-    case :ets.lookup(name, key) do
+  def get(key, touch \\ true) do
+    case :ets.lookup(:cache, key) do
       [{_, _, value}] ->
-        touch && Agent.get(name, __MODULE__, :handle_touch, [key])
+        touch && Agent.get(:cache, __MODULE__, :handle_touch, [key])
         value
 
       [] ->
@@ -85,20 +82,12 @@ defmodule ElixirCachingValidere.LruCache do
     :ok
   end
 
-  def delete(name, key),
-    do: Agent.get(name, __MODULE__, :handle_delete, [key])
+  def delete(key),
+    do: Agent.get(:cache, __MODULE__, :handle_delete, [key])
 
   def handle_delete(state = %{table: table}, key) do
     delete_timetable(state, key)
     :ets.delete(table, key)
     :ok
-  end
-
-  def get_value(key) do
-    ElixirCachingValidere.LruCache.get(:cache, key)
-  end
-
-  def post_value(key, value) do
-    ElixirCachingValidere.LruCache.put(:cache, key, value)
   end
 end

@@ -17,7 +17,7 @@ defmodule ElixirCachingValidere.Router do
   plug(:dispatch)
 
   get "/api/get/:key" do
-    send_resp(conn, 200, to_string(LruCache.get_value(key)))
+    send_resp(conn, 200, to_string(LruCache.get(key)))
   end
 
   post "api/value" do
@@ -25,7 +25,7 @@ defmodule ElixirCachingValidere.Router do
       %{"key" => key} ->
         conn
         |> put_resp_content_type("application/json")
-        |> send_resp(200, ServiceUtils.endpoint_success(LruCache.get_value(key)))
+        |> send_resp(200, ServiceUtils.endpoint_success(LruCache.get(key)))
 
       _ ->
         conn
@@ -38,10 +38,10 @@ defmodule ElixirCachingValidere.Router do
   post "api/post" do
     case conn.body_params do
       %{"key" => key, "value" => value} ->
-        LruCache.post_value(key, value)
+        LruCache.put(key, value)
         conn
         |> put_resp_content_type("application/json")
-        |> send_resp(200, ServiceUtils.endpoint_success(LruCache.get_value(key)))
+        |> send_resp(200, ServiceUtils.endpoint_success(LruCache.get(key)))
 
       _ ->
         conn
